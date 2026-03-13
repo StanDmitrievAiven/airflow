@@ -157,6 +157,19 @@ RUN pip install --no-cache-dir -r /requirements.txt
 
 ## Troubleshooting
 
+### Bad Gateway (502) When Accessing the UI
+
+1. **Wait for startup** – Airflow standalone can take 3–5 minutes to fully start. The container may show "Running" before the webserver is ready. Wait a few minutes and try again.
+
+2. **Check application logs** – In Aiven, open the application logs and look for:
+   - `Running on http://0.0.0.0:8080` (webserver started successfully)
+   - Database connection errors
+   - Python tracebacks or migration failures
+
+3. **Try the root URL** – Use `https://<your-app-url>/` (without `/login`). Airflow may redirect you to the login page.
+
+4. **Verify port** – Ensure the internal port in Aiven matches 8080 (Airflow's default). If Aiven injects a `PORT` env var, the entrypoint uses it automatically.
+
 ### Database Connection Issues
 
 - Verify your PostgreSQL connection string is correct

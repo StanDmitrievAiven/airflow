@@ -20,9 +20,18 @@ fi
 echo "Database configuration found. Proceeding with application startup."
 echo "---"
 
+# --- Webserver binding: must listen on 0.0.0.0 for proxy/load balancer access ---
+export AIRFLOW__WEBSERVER__WEB_SERVER_HOST="${AIRFLOW__WEBSERVER__WEB_SERVER_HOST:-0.0.0.0}"
+
 # --- Port configuration (Aiven App Runtime may inject PORT) ---
 if [ -n "$PORT" ]; then
     export AIRFLOW__WEBSERVER__WEB_SERVER_PORT="$PORT"
+fi
+
+# --- Base URL for proxy deployments (optional) ---
+# Set BASE_URL to your external URL if you see redirect or cookie issues behind a proxy
+if [ -n "$BASE_URL" ]; then
+    export AIRFLOW__WEBSERVER__BASE_URL="$BASE_URL"
 fi
 
 # --- Run migrations on startup (idempotent) ---
