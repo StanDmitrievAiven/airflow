@@ -9,12 +9,14 @@ ENV AIRFLOW__CORE__EXECUTOR=LocalExecutor
 ENV AIRFLOW__WEBSERVER__EXPOSE_CONFIG=false
 ENV AIRFLOW__CORE__LOAD_EXAMPLES=false
 
-# Copy custom entrypoint that validates env and runs migrations
+# Copy custom entrypoint (run as root - Airflow image uses non-root user)
+USER root
 COPY entrypoint.sh /entrypoint-custom.sh
 RUN chmod +x /entrypoint-custom.sh
+USER airflow
 
 # Copy DAGs (add your DAGs to the dags/ directory)
-COPY dags/ /opt/airflow/dags/
+COPY --chown=airflow:root dags/ /opt/airflow/dags/
 
 # Use custom entrypoint that wraps Airflow's entrypoint
 ENTRYPOINT ["/usr/bin/dumb-init", "--", "/entrypoint-custom.sh"]
