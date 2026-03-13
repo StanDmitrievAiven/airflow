@@ -18,6 +18,17 @@ Apache Airflow is a platform to programmatically author, schedule, and monitor w
 - PostgreSQL database service in Aiven (for Airflow's metadata storage)
 - Git repository access (this repo)
 
+## Resource Requirements
+
+Airflow standalone runs webserver, scheduler, triggerer, DAG processor, and API server in one container. Recommended compute:
+
+| Resource | Minimum | Recommended |
+|----------|---------|-------------|
+| **RAM**  | 2 GB    | **4–8 GB**  |
+| **CPU**  | 1 vCPU  | **2 vCPUs** |
+
+Startup can take **5–7 minutes** with limited resources. If the app is slow to become ready or returns Bad Gateway, increase RAM to at least 4 GB. The [official Docker guide](https://airflow.apache.org/docs/apache-airflow/stable/howto/docker-compose.html) recommends 4 GB minimum, 8 GB for smoother operation.
+
 ## Required Environment Variables
 
 A database connection **must** be configured. You can use either:
