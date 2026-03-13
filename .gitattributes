@@ -1,0 +1,8 @@
+# Ensure shell scripts use LF line endings
+*.sh text eol=lf
+
+# Ensure Dockerfile uses LF line endings
+Dockerfile text eol=lf
+
+# Default to LF for all text files
+* text=auto eol=lf
