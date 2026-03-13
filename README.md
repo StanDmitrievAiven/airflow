@@ -20,9 +20,13 @@ Apache Airflow is a platform to programmatically author, schedule, and monitor w
 
 ## Required Environment Variables
 
-The following environment variables **must** be set in your Aiven App Runtime configuration:
+A database connection **must** be configured. You can use either:
 
-### Database Connection (Required)
+### Option 1: Aiven Service Integration (Recommended)
+
+When you **connect a PostgreSQL service** in Aiven App Runtime's "Connect services" step, Aiven automatically injects `DATABASE_URL`. The entrypoint detects this and configures Airflow accordingly—no extra setup needed.
+
+### Option 2: Manual Configuration
 
 - `AIRFLOW__DATABASE__SQL_ALCHEMY_CONN` - PostgreSQL connection string for Airflow metadata
 

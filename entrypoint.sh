@@ -2,10 +2,19 @@
 set -e
 
 # --- Environment Variable Check ---
-# Ensure the database connection string is set (required for production)
-if [ -z "$AIRFLOW__DATABASE__SQL_ALCHEMY_CONN" ]; then
-    echo "ERROR: AIRFLOW__DATABASE__SQL_ALCHEMY_CONN must be set."
-    echo "Example: postgresql+psycopg2://user:password@host:port/database"
+# Support both AIRFLOW__DATABASE__SQL_ALCHEMY_CONN and DATABASE_URL (Aiven service integration)
+if [ -n "$AIRFLOW__DATABASE__SQL_ALCHEMY_CONN" ]; then
+    echo "Using AIRFLOW__DATABASE__SQL_ALCHEMY_CONN for database connection."
+elif [ -n "$DATABASE_URL" ]; then
+    # Aiven exposes PostgreSQL as DATABASE_URL; convert to Airflow's expected format
+    # postgres:// -> postgresql+psycopg2:// for SQLAlchemy/psycopg2
+    AIRFLOW__DATABASE__SQL_ALCHEMY_CONN=$(echo "$DATABASE_URL" | sed 's|^postgres://|postgresql+psycopg2://|;s|^postgresql://|postgresql+psycopg2://|')
+    export AIRFLOW__DATABASE__SQL_ALCHEMY_CONN
+    echo "Using DATABASE_URL (Aiven service integration) for database connection."
+else
+    echo "ERROR: Database connection required. Set either:"
+    echo "  - AIRFLOW__DATABASE__SQL_ALCHEMY_CONN (postgresql+psycopg2://user:pass@host:port/db)"
+    echo "  - DATABASE_URL (auto-set when connecting PostgreSQL in Aiven)"
     exit 1
 fi
 echo "Database configuration found. Proceeding with application startup."
