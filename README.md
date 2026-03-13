@@ -51,12 +51,16 @@ Get the connection string from your Aiven PostgreSQL service. Ensure the databas
 
 ### First-Run Configuration (Optional)
 
-For the first deployment, you may want to create an admin user. **Use these Aiven-compatible names** (Aiven rejects variable keys starting with `_`):
+**Important:** Aiven rejects environment variable keys that start with `_`. Do **not** use `_AIRFLOW_DB_MIGRATE`, `_AIRFLOW_WWW_USER_CREATE`, or `_AIRFLOW_WWW_USER_PASSWORD`—they will cause validation errors.
+
+For the first deployment, you may want to create an admin user. Use these Aiven-compatible names:
 
 - `AIRFLOW_WWW_USER_CREATE` - Set to `true` to create an admin user
 - `AIRFLOW_WWW_USER_PASSWORD` - Admin password (required when creating user)
 
 Migrations run automatically on startup (no variable needed). To disable, set `AIRFLOW_DB_MIGRATE=false`.
+
+**Note:** Airflow 3.x standalone mode auto-creates an `admin` user with a random password on first run. Check the application logs for `Password for user 'admin': <password>`—you may not need to set these variables.
 
 Example for first run:
 
