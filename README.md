@@ -40,17 +40,18 @@ Get the connection string from your Aiven PostgreSQL service. Ensure the databas
 
 ### First-Run Configuration (Optional)
 
-For the first deployment, you may want to create an admin user:
+For the first deployment, you may want to create an admin user. **Use these Aiven-compatible names** (Aiven rejects variable keys starting with `_`):
 
-- `_AIRFLOW_DB_MIGRATE` - Set to `true` to run database migrations on startup (default: `true`)
-- `_AIRFLOW_WWW_USER_CREATE` - Set to `true` to create an admin user
-- `_AIRFLOW_WWW_USER_PASSWORD` - Admin password (required when creating user)
+- `AIRFLOW_WWW_USER_CREATE` - Set to `true` to create an admin user
+- `AIRFLOW_WWW_USER_PASSWORD` - Admin password (required when creating user)
+
+Migrations run automatically on startup (no variable needed). To disable, set `AIRFLOW_DB_MIGRATE=false`.
 
 Example for first run:
 
 ```
-_AIRFLOW_WWW_USER_CREATE=true
-_AIRFLOW_WWW_USER_PASSWORD=your-secure-password
+AIRFLOW_WWW_USER_CREATE=true
+AIRFLOW_WWW_USER_PASSWORD=your-secure-password
 ```
 
 ### Other Configuration (Optional)
@@ -69,7 +70,7 @@ _AIRFLOW_WWW_USER_PASSWORD=your-secure-password
 
 3. **Configure Environment Variables**
    - Add `AIRFLOW__DATABASE__SQL_ALCHEMY_CONN` with your PostgreSQL connection string from Aiven
-   - For first run, add `_AIRFLOW_WWW_USER_CREATE=true` and `_AIRFLOW_WWW_USER_PASSWORD=<password>`
+   - For first run, add `AIRFLOW_WWW_USER_CREATE=true` and `AIRFLOW_WWW_USER_PASSWORD=<password>`
 
 4. **Configure Port**
    - Open port **8080** in your App Runtime configuration (or the port Aiven assigns via `PORT` env var)
@@ -115,7 +116,7 @@ Default login (if you created a user): `admin` / your configured password.
 
 2. **Runtime**: The entrypoint script:
    - Validates that `AIRFLOW__DATABASE__SQL_ALCHEMY_CONN` is set
-   - Runs database migrations automatically (`_AIRFLOW_DB_MIGRATE=true`)
+   - Runs database migrations automatically
    - Starts Airflow in standalone mode (webserver + scheduler + triggerer in one process)
 
 ## Adding DAGs
@@ -175,7 +176,7 @@ RUN pip install --no-cache-dir -r /requirements.txt
 
 ## Security Considerations
 
-- Use a strong password for `_AIRFLOW_WWW_USER_PASSWORD`
+- Use a strong password for `AIRFLOW_WWW_USER_PASSWORD`
 - Consider configuring [Airflow authentication](https://airflow.apache.org/docs/apache-airflow/stable/security/webserver.html) (OAuth, LDAP, etc.) for production
 - Restrict network access to the application as appropriate
 - Do not commit secrets to the repository; use Aiven's environment variable configuration

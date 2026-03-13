@@ -26,8 +26,15 @@ if [ -n "$PORT" ]; then
 fi
 
 # --- Run migrations on startup (idempotent) ---
-# Airflow's entrypoint supports _AIRFLOW_DB_MIGRATE to run migrations automatically
-export _AIRFLOW_DB_MIGRATE="${_AIRFLOW_DB_MIGRATE:-true}"
+# Airflow's entrypoint uses _AIRFLOW_DB_MIGRATE. Aiven rejects keys starting with _,
+# so we accept AIRFLOW_DB_MIGRATE and map it.
+_AIRFLOW_DB_MIGRATE="${_AIRFLOW_DB_MIGRATE:-${AIRFLOW_DB_MIGRATE:-true}}"
+export _AIRFLOW_DB_MIGRATE
+
+# --- Map Aiven-compatible vars to Airflow's _-prefixed vars ---
+# Aiven requires keys to match ^[a-zA-Z][a-zA-Z0-9_]*$ (no leading underscore)
+[ -n "$AIRFLOW_WWW_USER_CREATE" ] && export _AIRFLOW_WWW_USER_CREATE="$AIRFLOW_WWW_USER_CREATE"
+[ -n "$AIRFLOW_WWW_USER_PASSWORD" ] && export _AIRFLOW_WWW_USER_PASSWORD="$AIRFLOW_WWW_USER_PASSWORD"
 
 # --- Exec into Airflow's entrypoint ---
 # Pass through all arguments (default: standalone)
